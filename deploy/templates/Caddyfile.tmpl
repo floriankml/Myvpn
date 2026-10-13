@@ -1,0 +1,16 @@
+# DeutschlandVPN – optionaler öffentlicher Zugang zur Weboberfläche über HTTPS.
+# Caddy holt automatisch ein Let's-Encrypt-Zertifikat für ${DOMAIN}.
+# Administrative Funktionen bleiben trotzdem auf VPN-Adressen beschränkt.
+{
+    admin off
+}
+
+${DOMAIN} {
+    encode zstd gzip
+    header Strict-Transport-Security "max-age=31536000"
+    # Kein Zugriffslog (Datensparsamkeit)
+    log {
+        output discard
+    }
+    reverse_proxy ${SERVER_V4}:${WEB_PORT}
+}

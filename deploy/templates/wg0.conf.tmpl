@@ -1,0 +1,8 @@
+# DeutschlandVPN – WireGuard-Server-Interface (verwaltet von install.sh)
+# Rechte: root:root 0600. Peers werden NICHT hier gepflegt, sondern zur
+# Laufzeit vom dvpn-agent gesetzt (Zustand: /var/lib/dvpn-agent/peers.json).
+[Interface]
+Address = ${WG_ADDRESSES}
+ListenPort = ${WG_PORT}
+PrivateKey = ${SERVER_PRIVATE_KEY}
+SaveConfig = false

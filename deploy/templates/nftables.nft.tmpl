@@ -1,0 +1,79 @@
+#!/usr/sbin/nft -f
+# DeutschlandVPN – Firewall und NAT (verwaltet von install.sh)
+#
+# Grundsatz: alles verboten, was nicht ausdrücklich erlaubt ist.
+# Die "table … / delete table … / table … { }"-Folge ersetzt die Tabellen
+# atomar und idempotent, ohne fremde Regeln (z. B. des Anbieters) zu löschen.
+
+table inet dvpn
+delete table inet dvpn
+table inet dvpn {
+    chain input {
+        type filter hook input priority filter; policy drop;
+        ct state established,related accept
+        ct state invalid drop
+        iif "lo" accept
+
+        # ICMP/ICMPv6 (für PMTU-Discovery und IPv6-Neighbor-Discovery notwendig)
+        meta l4proto icmp icmp type { echo-request, destination-unreachable, time-exceeded, parameter-problem } limit rate 20/second accept
+        meta l4proto ipv6-icmp accept
+
+        # SSH (Brute-Force-Bremse; zusätzlich nur Schlüssel-Login, siehe Doku)
+        tcp dport ${SSH_PORT} ct state new limit rate 20/minute accept
+
+        # WireGuard
+        udp dport ${WG_PORT} accept
+
+        # Dienste NUR aus dem Tunnel: DNS (Unbound) und Weboberfläche
+        iifname "${WG_IF}" udp dport 53 accept
+        iifname "${WG_IF}" tcp dport 53 accept
+        iifname "${WG_IF}" tcp dport ${WEB_PORT} accept
+
+${PUBLIC_WEB_RULE}
+    }
+
+    chain forward {
+        type filter hook forward priority filter; policy drop;
+        # MSS an Tunnel-MTU anpassen (vermeidet hängende Verbindungen bei Fragmentierung)
+        iifname "${WG_IF}" tcp flags syn / syn,rst tcp option maxseg size set rt mtu
+        oifname "${WG_IF}" tcp flags syn / syn,rst tcp option maxseg size set rt mtu
+
+        ct state established,related accept
+        ct state invalid drop
+
+        # Client-Isolation: Geräte können sich gegenseitig NICHT erreichen
+        iifname "${WG_IF}" oifname "${WG_IF}" drop
+
+        # Kein direkter Mailversand (Port 25) aus dem Tunnel – schützt die IP-Reputation vor Spam.
+        # Mail-Clients nutzen 465/587 (Submission) und sind nicht betroffen.
+        iifname "${WG_IF}" tcp dport 25 reject with tcp reset
+
+        # IPv4 aus dem VPN-Netz ins Internet
+        iifname "${WG_IF}" oifname "${WAN_IF}" ip saddr ${SUBNET_V4} accept
+
+        # IPv6-Strategie
+${V6_FORWARD_RULES}
+    }
+
+    chain output {
+        type filter hook output priority filter; policy accept;
+    }
+}
+
+table ip dvpn_nat
+delete table ip dvpn_nat
+table ip dvpn_nat {
+    chain prerouting {
+        type nat hook prerouting priority dstnat; policy accept;
+        # DNS-Leckschutz: jede unverschlüsselte DNS-Anfrage aus dem Tunnel geht an
+        # den eigenen Resolver – auch wenn ein Gerät einen anderen DNS-Server nutzt.
+        iifname "${WG_IF}" ip daddr != ${SERVER_V4} udp dport 53 dnat to ${SERVER_V4}:53
+        iifname "${WG_IF}" ip daddr != ${SERVER_V4} tcp dport 53 dnat to ${SERVER_V4}:53
+    }
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+        oifname "${WAN_IF}" ip saddr ${SUBNET_V4} masquerade
+    }
+}
+
+${NAT6_TABLE}

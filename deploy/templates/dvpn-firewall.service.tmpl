@@ -1,0 +1,18 @@
+[Unit]
+Description=DeutschlandVPN Firewall/NAT (nftables)
+# Vor dem Netzwerk und vor WireGuard laden, nach einem evtl. vorhandenen nftables.service
+Wants=network-pre.target
+Before=network-pre.target wg-quick@${WG_IF}.service
+After=nftables.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/nft -f /etc/dvpn/nftables.nft
+ExecReload=/usr/sbin/nft -f /etc/dvpn/nftables.nft
+ExecStop=/usr/sbin/nft delete table inet dvpn
+ExecStop=-/usr/sbin/nft delete table ip dvpn_nat
+ExecStop=-/usr/sbin/nft delete table ip6 dvpn_nat6
+
+[Install]
+WantedBy=multi-user.target

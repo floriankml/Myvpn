@@ -1,0 +1,46 @@
+[Unit]
+Description=DeutschlandVPN Verwaltungs-Backend (unprivilegiert)
+After=network-online.target wg-quick@${WG_IF}.service dvpn-agent.service
+Wants=network-online.target dvpn-agent.service
+Requires=wg-quick@${WG_IF}.service
+
+[Service]
+Type=simple
+User=dvpn
+Group=dvpn
+EnvironmentFile=/etc/dvpn/dvpn.env
+WorkingDirectory=${STATE_DIR}
+# Lauscht NUR auf der Tunnel-Adresse des Servers – nicht im Internet erreichbar.
+# Zugriffs-Logs sind abgeschaltet (Datensparsamkeit). Genau EIN Prozess (Rate-Limiter im RAM).
+ExecStart=${INSTALL_DIR}/venv/bin/uvicorn --factory dvpn.main:app_from_env \
+    --host ${SERVER_V4} --port ${WEB_PORT} --no-access-log --no-server-header \
+    --proxy-headers --forwarded-allow-ips ${FORWARDED_ALLOW}
+Restart=on-failure
+RestartSec=2
+
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+StateDirectory=dvpn
+StateDirectoryMode=0700
+UMask=0077
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+
+[Install]
+WantedBy=multi-user.target

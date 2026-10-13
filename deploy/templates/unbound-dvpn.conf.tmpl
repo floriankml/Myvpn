@@ -1,0 +1,41 @@
+# DeutschlandVPN – rekursiver DNS-Resolver nur für VPN-Clients
+# Keine Anfrage-Protokollierung. DNSSEC-Validierung über das Distributions-
+# Standard-Setup (root-auto-trust-anchor-file).
+server:
+    interface: ${SERVER_V4}
+    access-control: ${SUBNET_V4} allow
+${UNBOUND_IFACE_V6}
+    # Unbound darf starten, bevor wg0 existiert
+    ip-freebind: yes
+    do-ip6: ${UNBOUND_DO_IP6}
+
+    # Datensparsamkeit
+    verbosity: 0
+    log-queries: no
+    log-replies: no
+    log-servfail: no
+    hide-identity: yes
+    hide-version: yes
+    qname-minimisation: yes
+
+    # Härtung
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    harden-below-nxdomain: yes
+    harden-referral-path: no
+    aggressive-nsec: yes
+    use-caps-for-id: no
+    unwanted-reply-threshold: 10000000
+    # Schutz vor DNS-Rebinding: private Adressen nicht aus öffentlichen Antworten
+    private-address: 10.0.0.0/8
+    private-address: 172.16.0.0/12
+    private-address: 192.168.0.0/16
+    private-address: 169.254.0.0/16
+    private-address: fd00::/8
+    private-address: fe80::/10
+
+    # Leistung für kleinen VPS
+    prefetch: yes
+    num-threads: 1
+    msg-cache-size: 16m
+    rrset-cache-size: 32m

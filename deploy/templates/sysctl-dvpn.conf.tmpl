@@ -1,0 +1,12 @@
+# DeutschlandVPN – Routing
+net.ipv4.ip_forward = 1
+net.ipv6.conf.all.forwarding = ${IPV6_FORWARDING}
+# Bei aktivem IPv6-Forwarding Router-Advertisements auf dem WAN-Interface weiter
+# akzeptieren, sonst verliert der Server ggf. seine eigene IPv6-Default-Route.
+net.ipv6.conf.${WAN_IF}.accept_ra = 2
+# Härtung
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.all.send_redirects = 0
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv4.tcp_syncookies = 1

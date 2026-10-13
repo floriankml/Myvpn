@@ -1,0 +1,20 @@
+# Abhängigkeiten / Build
+node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+.venv/
+venv/
+.pytest_cache/
+
+# Laufzeitdaten und Geheimnisse – niemals einchecken
+*.db
+*.db-shm
+*.db-wal
+*.conf.local
+*.key
+.env
+*.env.local
+/tmp/

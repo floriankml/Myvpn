@@ -1,0 +1,46 @@
+[Unit]
+Description=DeutschlandVPN WireGuard-Agent (privilegiert, nur CAP_NET_ADMIN)
+After=wg-quick@${WG_IF}.service
+Requires=wg-quick@${WG_IF}.service
+# Startet neu, wenn das Interface neu gestartet wird -> Peers werden wiederhergestellt
+PartOf=wg-quick@${WG_IF}.service
+
+[Service]
+Type=simple
+User=dvpn-agent
+Group=dvpn-agent
+SupplementaryGroups=dvpn
+EnvironmentFile=/etc/dvpn/agent.env
+# Nur Standardbibliothek; Code liegt root-eigen und schreibgeschützt in WorkingDirectory.
+WorkingDirectory=${INSTALL_DIR}/src/agent
+ExecStart=/usr/bin/python3 -s -B -m dvpn_agent
+Restart=on-failure
+RestartSec=2
+
+# Rechte: nur Netzwerkadministration, sonst nichts
+AmbientCapabilities=CAP_NET_ADMIN
+CapabilityBoundingSet=CAP_NET_ADMIN
+NoNewPrivileges=yes
+RuntimeDirectory=dvpn-agent
+RuntimeDirectoryMode=0755
+StateDirectory=dvpn-agent
+StateDirectoryMode=0700
+UMask=0077
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictAddressFamilies=AF_UNIX AF_NETLINK
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+
+[Install]
+WantedBy=multi-user.target
