@@ -1,6 +1,6 @@
 # DeutschlandVPN
 
-Ein **echter, selbst betriebener WireGuard-VPN-Dienst** mit Serverstandort in Deutschland, einer deutschsprachigen Weboberfläche zur Geräteverwaltung und Fokus auf Sicherheit, Datensparsamkeit und niedrige Kosten (ab ca. 4 € pro Monat für einen VPS).
+Ein **echter, selbst betriebener WireGuard-VPN-Dienst** mit Serverstandort in Deutschland, einer deutschsprachigen Weboberfläche zur Geräteverwaltung und Fokus auf Sicherheit, Datensparsamkeit und niedrige Kosten (ab ca. 4 € pro Monat für einen VPS, privat auch praktisch kostenlos zu Hause, siehe [docs/kostenlos.md](docs/kostenlos.md)).
 
 > Status: **privates MVP**. Für den Eigenbetrieb und eingeladene Personen gedacht. Für einen öffentlichen Betrieb siehe [docs/produktivbetrieb.md](docs/produktivbetrieb.md).
 
@@ -63,6 +63,7 @@ Details: [docs/01-planung.md](docs/01-planung.md)
 | [docs/sicherheit.md](docs/sicherheit.md) | Sicherheitskonzept, Schlüsselverwaltung, Provisionierung, Sperrung, Leckschutz, Grenzen |
 | [docs/datenschutz.md](docs/datenschutz.md) | Welche Daten anfallen: gespeichert / nur im RAM / nicht erfasst |
 | [docs/kosten.md](docs/kosten.md) | VPS-Vergleich, monatliche Kosten, Prüfliste vor der Bestellung |
+| [docs/kostenlos.md](docs/kostenlos.md) | **Kostenlos für Familie:** zu Hause (Raspberry Pi/FRITZ!Box) oder Oracle Cloud Free Tier |
 | [docs/tests.md](docs/tests.md) | Phase 3: Teststrategie und **tatsächliche Testergebnisse** |
 | [docs/wartung.md](docs/wartung.md) | Phase 5: Updates, Backups, Schlüsselrotation, Abschaltung, Sicherheits-Checkliste |
 | [docs/produktivbetrieb.md](docs/produktivbetrieb.md) | Was vor einem öffentlichen Start noch fehlt (Recht, Technik, Organisation) |

@@ -2,6 +2,8 @@
 
 > **Wichtig:** Die folgenden Angaben stammen aus einer Web-Recherche vom **13.10.2026** über **Drittquellen** (Vergleichsportale, Reviews). Die offiziellen Preisseiten der Anbieter waren aus der Entwicklungsumgebung **nicht abrufbar**, und die Quellen widersprechen sich teilweise, weil mehrere Anbieter 2026 die Preise angehoben haben. **Alle Werte sind daher unverifiziert.** Prüfen Sie Preis, Standort und Konditionen vor einer Bestellung im Bestellprozess des Anbieters. Es wird nichts ohne Ihre ausdrückliche Bestätigung bestellt.
 
+> **Nur für Sie und Ihre Familie?** Kostenlose Varianten (zu Hause oder Oracle Free Tier) stehen in [kostenlos.md](kostenlos.md).
+
 ## 1. Was der Dienst braucht
 
 | Ressource | Bedarf (privates MVP, < 20 Geräte) |
